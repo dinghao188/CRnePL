@@ -1,69 +1,101 @@
 #include "crnepl.h"
+#include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
 Crnepl::Crnepl()
 {
-    prompt = ">";
-    istream = NULL;
-    ostream = NULL;
+    m_sPrompt = ">";
 
-    iHisBeginPos = 0;
-    iHisEndPos = HISTORY_SIZE-1;
-    iHisCurPos = 0;
+    m_iHisBeginPos = 0;
+    m_iHisEndPos = HISTORY_SIZE-1;
+    m_iHisCurPos = 0;
 
     InitSysActionMap();
     InitUserActionMap();
+
+#ifdef __linux
+    system("stty -echo; stty raw");
+#endif
+}
+
+Crnepl::~Crnepl()
+{
+#ifdef __linux
+    system("stty echo; stty -raw");
+#endif
+}
+
+void Crnepl::LoopOnce(char *buf)
+{
+    char ch;
+    int bufPos = 0;
+    cout << m_sPrompt << ' ';
+
+    while (cin.get(ch) && cin.good())
+    {
+        if (ch >= crnepl::DISPLAY_ASCII_START && ch <= DISPLAY_ASCII_END)
+        {
+            cout << ch;
+            buf[bufPos++] = ch;
+        }
+        else
+        {
+            break;
+            buf[bufPos] = 0;
+        }
+    }
 }
 
 void Crnepl::AddHistory(string &record)
 {
-    aHistoryRecord[iHisBeginPos] = record;
-    iHisBeginPos = RoundPos(iHisBeginPos+1);
-    aHistoryRecord[iHisBeginPos] = "";
+    m_aHistoryRecord[m_iHisBeginPos] = record;
+    m_iHisBeginPos = RoundPos(m_iHisBeginPos+1);
+    m_aHistoryRecord[m_iHisBeginPos] = "";
 
-    if (iHisBeginPos == iHisEndPos)
+    if (m_iHisBeginPos == m_iHisEndPos)
     {
-        iHisEndPos = RoundPos(iHisEndPos+1);
+        m_iHisEndPos = RoundPos(m_iHisEndPos+1);
     }
     
-    iHisCurPos = iHisBeginPos;
+    m_iHisCurPos = m_iHisBeginPos;
 }
 
 string & Crnepl::GetPrevInput()
 {
-    if (iHisCurPos != iHisEndPos)
+    if (m_iHisCurPos != m_iHisEndPos)
     {
-        iHisCurPos = RoundPos(iHisCurPos-1);
+        m_iHisCurPos = RoundPos(m_iHisCurPos-1);
     }
-    return aHistoryRecord[iHisCurPos];
+    return m_aHistoryRecord[m_iHisCurPos];
 }
 
 string & Crnepl::GetNextInput()
 {
-    if (iHisCurPos != iHisBeginPos)
+    if (m_iHisCurPos != m_iHisBeginPos)
     {
-        iHisCurPos = RoundPos(iHisCurPos+1);
+        m_iHisCurPos = RoundPos(m_iHisCurPos+1);
     }
-    return aHistoryRecord[iHisCurPos];
+    return m_aHistoryRecord[m_iHisCurPos];
 }
 
 string & Crnepl::GetCurInput()
 {
-    return aHistoryRecord[iHisCurPos];
+    return m_aHistoryRecord[m_iHisCurPos];
 }
 
 void Crnepl::InitSysActionMap()
 {
-    oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_J, ACT_SUBMIT));
-    oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_H, ACT_BS));
-    oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_D, ACT_DEL));
+    m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_J, ACT_SUBMIT));
+    m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_H, ACT_BS));
+    m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_D, ACT_DEL));
 }
 
 void Crnepl::InitUserActionMap()
 {
-    oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_U, ACT_CLEAR_LINE));
-    oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_P, ACT_PRE));
-    oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_N, ACT_NEXT));
-    oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_I, ACT_COMPLETION));
+    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_U, ACT_CLEAR_LINE));
+    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_P, ACT_PRE));
+    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_N, ACT_NEXT));
+    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_I, ACT_COMPLETION));
 }

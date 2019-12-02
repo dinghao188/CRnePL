@@ -1,8 +1,6 @@
 #ifndef _CRNEPL_H
 #define _CRNEPL_H
 
-#include <istream>
-#include <ostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -57,7 +55,15 @@ namespace crnepl
     {
     public:
         Crnepl();
+        ~Crnepl();
         
+        /*
+         * @description The entry of getting an input
+         * @param buf The buffer to store input,user provided
+         * @return void
+         */
+        void LoopOnce(char *buf);
+
         /* @description Add a record to the history queue
          * @return void
          */
@@ -95,17 +101,15 @@ namespace crnepl
     public:
         const int HISTORY_SIZE = 100; //max size of historical input
     private:
-        std::string prompt; // prompt string
-        std::istream *pInput; //input stream
-        std::ostream *pOutput; //output stream
+        std::string m_sPrompt; // prompt string
 
-        std::map<KEY_CODE,ACTION_CODE> oSysActionMap;
-        std::map<KEY_CODE,ACTION_CODE> oUserActionMap;
+        std::map<KEY_CODE,ACTION_CODE> m_oSysActionMap;
+        std::map<KEY_CODE,ACTION_CODE> m_oUserActionMap;
 
-        std::string aHistoryRecord[HISTORY_SIZE]; //record the history input, this is a loop queue
-        int iHisBeginPos; // begin pos of his queue;
-        int iHisEndPos; // end pos of his queue;
-        int iHisCurPos; // cur pos of his queue;
+        std::string m_aHistoryRecord[HISTORY_SIZE]; //record the history input, this is a loop queue
+        int m_iHisBeginPos; // begin pos of his queue;
+        int m_iHisEndPos; // end pos of his queue;
+        int m_iHisCurPos; // cur pos of his queue;
     };
 }
 #endif
