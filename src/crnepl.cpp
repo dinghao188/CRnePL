@@ -3,6 +3,7 @@
 #include <cstdlib>
 
 using namespace std;
+using namespace crnepl;
 
 Crnepl::Crnepl()
 {
@@ -16,14 +17,14 @@ Crnepl::Crnepl()
     InitUserActionMap();
 
 #ifdef __linux
-    system("stty -echo; stty raw");
+    system("stty -echo; stty -icanon");
 #endif
 }
 
 Crnepl::~Crnepl()
 {
 #ifdef __linux
-    system("stty echo; stty -raw");
+    system("stty sane");
 #endif
 }
 
@@ -31,21 +32,28 @@ void Crnepl::LoopOnce(char *buf)
 {
     char ch;
     int bufPos = 0;
+    buf[0] = 0;
     cout << m_sPrompt << ' ';
 
     while (cin.get(ch) && cin.good())
     {
+        cout << (int)ch;
         if (ch >= crnepl::DISPLAY_ASCII_START && ch <= DISPLAY_ASCII_END)
         {
             cout << ch;
             buf[bufPos++] = ch;
         }
+        else if (ch == '\n')
+        {
+            buf[bufPos] = 0;
+            system(buf);
+            break;
+        }
         else
         {
-            break;
-            buf[bufPos] = 0;
         }
     }
+    
 }
 
 void Crnepl::AddHistory(string &record)

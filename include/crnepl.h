@@ -99,7 +99,7 @@ namespace crnepl
         void InitUserActionMap();
 
     public:
-        const int HISTORY_SIZE = 100; //max size of historical input
+        static const int HISTORY_SIZE = 100; //max size of historical input
     private:
         std::string m_sPrompt; // prompt string
 
