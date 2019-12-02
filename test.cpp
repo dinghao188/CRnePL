@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include "crnepl.h"
 #include <cstring>
 
@@ -17,6 +18,7 @@ int main()
         }
         else
         {
+            system(buf);
         }
     }
 }

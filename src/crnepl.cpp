@@ -24,7 +24,7 @@ Crnepl::Crnepl()
 Crnepl::~Crnepl()
 {
 #ifdef __linux
-    system("stty sane");
+    system("stty echo; stty icanon");
 #endif
 }
 
@@ -37,16 +37,15 @@ void Crnepl::LoopOnce(char *buf)
 
     while (cin.get(ch) && cin.good())
     {
-        cout << (int)ch;
         if (ch >= crnepl::DISPLAY_ASCII_START && ch <= DISPLAY_ASCII_END)
         {
             cout << ch;
             buf[bufPos++] = ch;
         }
-        else if (ch == '\n')
+        else if (ch == KEY_CTRL_J)
         {
             buf[bufPos] = 0;
-            system(buf);
+            cout << endl;
             break;
         }
         else
