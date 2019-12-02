@@ -28,7 +28,7 @@ static inline void MoveLeft(int n)
 }
 static inline void MoveTo(int x,int y)
 {
-    printf("\033[%d;%dH");
+    printf("\033[%d;%dH", x, y);
 }
 static inline void CursorStore()
 {

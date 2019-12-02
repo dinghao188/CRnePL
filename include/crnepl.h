@@ -28,6 +28,8 @@ namespace crnepl
         // displayable character code
         DISPLAY_ASCII_START = 32,   // ' '
         DISPLAY_ASCII_END = 126,   // '~'
+
+        KEY_BS = 127
     };
 
     /*

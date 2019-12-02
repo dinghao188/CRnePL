@@ -1,4 +1,5 @@
 #include "crnepl.h"
+#include "display.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -47,6 +48,16 @@ void Crnepl::LoopOnce(char *buf)
             buf[bufPos] = 0;
             cout << endl;
             break;
+        }
+        else if (ch == KEY_CTRL_H || ch == KEY_BS)
+        {
+            if (bufPos == 0)
+            {
+                continue;
+            }
+            buf[--bufPos] = 0;
+            MoveLeft(1);
+            DelRight(1);
         }
         else
         {
