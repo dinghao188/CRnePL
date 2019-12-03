@@ -36,7 +36,7 @@ void Crnepl::LoopOnce(char *buf)
     m_iBufLen = 0;
 
     char ch;
-    int iActionCode = 0;
+    ACTION_CODE iActionCode = ACT_NOACT;
     m_sBuf[0] = 0;
     cout << m_sPrompt << ' ';
 
@@ -48,7 +48,7 @@ void Crnepl::LoopOnce(char *buf)
             continue;
         }
         
-        iActionCode = GetActionCode(ch);
+        iActionCode = GetActionCode((KEY_CODE)ch);
         if (ExecuteAction(iActionCode))
         {
             break;
@@ -111,7 +111,7 @@ void Crnepl::InitUserActionMap()
 
 ACTION_CODE Crnepl::GetActionCode(KEY_CODE key)
 {
-    int iActionCode = 0;
+    ACTION_CODE iActionCode = ACT_NOACT;
     map<KEY_CODE, ACTION_CODE>::iterator it;
 
     it = m_oUserActionMap.find(key);
@@ -134,7 +134,7 @@ bool Crnepl::ExecuteAction(ACTION_CODE iActionCode)
     switch (iActionCode)
     {
     case ACT_NOACT:
-        return;
+        break;
     case ACT_SUBMIT:
         DoActionSubmit();
         return true;
@@ -175,5 +175,26 @@ void Crnepl::DoActionSubmit()
 {
     cout << endl;
     m_sBuf[m_iBufLen] = 0;
+}
+
+void Crnepl::DoActionBackspace()
+{
+    if (m_iBufPos == 0)
+    {
+        return;
+    }
+    
+    if (m_iBufPos == m_iBufLen)
+    {
+        MoveLeft(1);
+        DelRight(1);
+
+        m_sBuf[--m_iBufPos] = 0;
+        --m_iBufLen;
+    }
+    else 
+    {
+        m_sBuf[m_iBufPos] = 0;
+    }
 }
 /********************************************************************/
