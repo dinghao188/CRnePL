@@ -3,7 +3,7 @@ CPP=g++
 SOURCES=$(shell find . -name "*.cpp")
 OBJECTS=$(patsubst %.cpp,%.o,$(SOURCES))
 
-CPP_FLAGS=-g -c -std=c++11 -Iinclude
+CPP_FLAGS=-g -c -std=c++11 -Wall -Iinclude
 LD_FALGS=
 
 demo_shell: $(OBJECTS)

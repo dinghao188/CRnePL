@@ -40,8 +40,8 @@ namespace crnepl
         ACT_NOACT = 0,  // No Action
         ACT_BS,         // Remove one character forward
         ACT_DEL,        // Remove one character under current cursor
-        ACT_PRE,        // Get previous command
-        ACT_NEXT,       // Get next command
+        ACT_PRE_HIS,        // Get previous command
+        ACT_NEXT_HIS,       // Get next command
         ACT_CLEAR_LINE, // Clear current line input
         ACT_COMPLETION, // complete current input
         ACT_SUBMIT      // submit current  input
@@ -70,7 +70,7 @@ namespace crnepl
         /* @description Add a record to the history queue
          * @return void
          */
-        void AddHistory(std::string &record);
+        void AddHistory(const std::string &record);
         /*
          * @description Get previous input history
          * @return the reference of previous record
@@ -92,6 +92,9 @@ namespace crnepl
         void InsertChar(char ch);
         void DoActionSubmit();
         void DoActionBackspace();
+        void DoActionClearline();
+        void DoActionPreHis();
+        void DoActionNextHis();
     private:
         /*
          * @description Initialize sytem action map, cannot be modified
@@ -110,7 +113,7 @@ namespace crnepl
         ACTION_CODE GetActionCode(KEY_CODE key);
         /*
          * @description Execute an action
-         * @return void
+         * @return bool true:end this input loop,false:continue this input loop
          */
         bool ExecuteAction(ACTION_CODE iActionCode);
 

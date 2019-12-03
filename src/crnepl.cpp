@@ -39,6 +39,8 @@ void Crnepl::LoopOnce(char *buf)
     ACTION_CODE iActionCode = ACT_NOACT;
     m_sBuf[0] = 0;
     cout << m_sPrompt << ' ';
+    CursorStore();
+    
 
     while (cin.get(ch) && cin.good())
     {
@@ -48,16 +50,15 @@ void Crnepl::LoopOnce(char *buf)
             continue;
         }
         
-        iActionCode = GetActionCode((KEY_CODE)ch);
+        iActionCode = GetActionCode(KEY_CODE(ch));
         if (ExecuteAction(iActionCode))
         {
             break;
         }
     }
-    
 }
 
-void Crnepl::AddHistory(string &record)
+void Crnepl::AddHistory(const string &record)
 {
     m_aHistoryRecord[m_iHisBeginPos] = record;
     m_iHisBeginPos = RoundPos(m_iHisBeginPos+1);
@@ -99,13 +100,14 @@ void Crnepl::InitSysActionMap()
     m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_M, ACT_SUBMIT));
     m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_H, ACT_BS));
     m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_D, ACT_DEL));
+    m_oSysActionMap.insert(ACTION_MAP_ITEM(KEY_BS,ACT_BS));
 }
 
 void Crnepl::InitUserActionMap()
 {
     m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_U, ACT_CLEAR_LINE));
-    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_P, ACT_PRE));
-    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_N, ACT_NEXT));
+    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_P, ACT_PRE_HIS));
+    m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_N, ACT_NEXT_HIS));
     m_oUserActionMap.insert(ACTION_MAP_ITEM(KEY_CTRL_I, ACT_COMPLETION));
 }
 
@@ -142,6 +144,15 @@ bool Crnepl::ExecuteAction(ACTION_CODE iActionCode)
     case ACT_BS:
         DoActionBackspace();
         break;
+    case ACT_CLEAR_LINE:
+        DoActionClearline();
+        break;
+    case ACT_PRE_HIS:
+        DoActionPreHis();
+        break;
+    case ACT_NEXT_HIS:
+        DoActionNextHis();
+        break;
     default:
         break;
     }
@@ -175,6 +186,12 @@ void Crnepl::DoActionSubmit()
 {
     cout << endl;
     m_sBuf[m_iBufLen] = 0;
+
+    string sTmp(m_sBuf);
+    if (!sTmp.empty())
+    {
+        AddHistory(string(m_sBuf));    
+    }
 }
 
 void Crnepl::DoActionBackspace()
@@ -195,6 +212,39 @@ void Crnepl::DoActionBackspace()
     else 
     {
         m_sBuf[m_iBufPos] = 0;
+    }
+}
+
+void Crnepl::DoActionClearline()
+{
+    CursorRestore();
+    DelRight(-1);
+
+    m_iBufPos = m_iBufLen = 0;
+    m_sBuf[m_iBufPos] = 0;
+
+    CursorStore();
+}
+
+void Crnepl::DoActionPreHis()
+{
+    DoActionClearline();
+    
+    string &preHis = GetPrevInput();
+    for (string::size_type i = 0;i < preHis.length();++i)
+    {
+        InsertChar(preHis[i]);
+    }
+}
+
+void Crnepl::DoActionNextHis()
+{
+    DoActionClearline();
+
+    string &nextHis = GetNextInput();
+    for (string::size_type i = 0;i < nextHis.length();++i)
+    {
+        InsertChar(nextHis[i]);
     }
 }
 /********************************************************************/
