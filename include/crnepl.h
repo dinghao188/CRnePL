@@ -23,13 +23,13 @@ namespace crnepl
         KEY_CTRL_V, KEY_CTRL_W, KEY_CTRL_X, KEY_CTRL_Y, KEY_CTRL_Z,
 
         // Extend control key start with 27
-        KEY_CTRL_EXT = 27,
+        KEY_EXT = 27, // Esc
 
         // displayable character code
         DISPLAY_ASCII_START = 32,   // ' '
         DISPLAY_ASCII_END = 126,   // '~'
 
-        KEY_BS = 127
+        KEY_BS = 127 // maybe Backspace or Ctrl+Backspace
     };
 
     /*
@@ -37,7 +37,8 @@ namespace crnepl
      */
     enum ACTION_CODE
     {
-        ACT_BS = 1,     // Remove one character forward
+        ACT_NOACT = 0,  // No Action
+        ACT_BS,         // Remove one character forward
         ACT_DEL,        // Remove one character under current cursor
         ACT_PRE,        // Get previous command
         ACT_NEXT,       // Get next command
@@ -88,6 +89,9 @@ namespace crnepl
 
     protected:
         int RoundPos(int iPos) { return (iPos+HISTORY_SIZE) % HISTORY_SIZE; }
+        void InsertChar(char ch);
+        void DoActionSubmit();
+        void DoActionBackspace();
     private:
         /*
          * @description Initialize sytem action map, cannot be modified
@@ -99,6 +103,16 @@ namespace crnepl
          * @return void
          */
         void InitUserActionMap();
+        /*
+         * @description Get an action code according by keycode
+         * @return ACTION_CODE
+         */
+        ACTION_CODE GetActionCode(KEY_CODE key);
+        /*
+         * @description Execute an action
+         * @return void
+         */
+        bool ExecuteAction(ACTION_CODE iActionCode);
 
     public:
         static const int HISTORY_SIZE = 100; //max size of historical input
@@ -112,6 +126,10 @@ namespace crnepl
         int m_iHisBeginPos; // begin pos of his queue;
         int m_iHisEndPos; // end pos of his queue;
         int m_iHisCurPos; // cur pos of his queue;
+
+        char *m_sBuf;
+        int m_iBufPos;
+        int m_iBufLen;
     };
 }
 #endif
