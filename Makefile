@@ -1,16 +1,21 @@
 CPP=g++
 AR=ar
 
-SOURCES=$(shell find src -name "*.cpp")
-OBJECTS=$(patsubst %.cpp,%.o,$(SOURCES))
+LIB_SOURCES=$(shell find src -name "*.cpp")
+LIB_OBJECTS=$(patsubst %.cpp,%.o,$(SOURCES))
+
+DEMO_SOURCES=demo_shell.cpp
+DEMO_OBJECTS=$(patsubst %.cpp,%.o,$(DEMO_SOURCES))
 
 CPP_FLAGS=-g -c -std=c++11 -Wall -Iinclude
 LD_FALGS=
 AR_FLAGS=rc
 
-demo_shell: demo_shell.o 
-	@echo Linking with $(OBJECTS) ...
-	$(CPP) $(LD_FALGS) $(OBJECTS) -o $@
+all: demo_shell lib
+
+demo_shell: $(DEMO_OBJECTS) 
+	@echo Linking with $? ...
+	$(CPP) $(LD_FALGS) $? -o $@
 
 lib: $(OBJECTS)
 	@echo Building libcrnepl ...
