@@ -125,6 +125,13 @@ public:
      */
     void LoopOnce(char *buf);
 
+    /*
+     * @description Set the prompt string
+     * @param sPrompt The Prompt string
+     * @return void
+     */
+    void SetPrompt(const char *sPrompt);
+
     /* @description Add a record to the history queue
      * @return void
      */
@@ -251,6 +258,11 @@ void Crnepl::LoopOnce(char *buf)
             break;
         }
     }
+}
+
+void Crnepl::SetPrompt(const char *sPrompt)
+{
+    m_sPrompt = sPrompt;
 }
 
 void Crnepl::AddHistory(const string &record)

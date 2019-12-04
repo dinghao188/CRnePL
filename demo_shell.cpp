@@ -8,6 +8,7 @@ using namespace std;
 int main()
 {
     crnepl::Crnepl rpl;
+    rpl.SetPrompt("#>");
     char buf[1024];
     while (1)
     {

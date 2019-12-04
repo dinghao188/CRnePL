@@ -31,6 +31,11 @@ Crnepl::~Crnepl()
 #endif
 }
 
+void Crnepl::SetPrompt(const char *sPrompt)
+{
+    m_sPrompt = sPrompt;
+}
+
 void Crnepl::LoopOnce(char *buf)
 {
     m_sBuf = buf;
